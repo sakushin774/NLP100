@@ -71,10 +71,10 @@ def get_str_nouns(mslist):
             if mh['pos'] == '名詞':
                 bfr.append(mh['surface'])
             elif bfr != []:
-                print(','.join(bfr))
+                sys.stdout.buffer.write(','.join(bfr).encode('utf-8'))
                 bfr = []
 # print('ex35')
-#get_str_nouns(mor_strs_list)
+# get_str_nouns(mor_strs_list)
 
 #ex36:単語の出現頻度を求める
 #キー:単語の基本形, 値:単語の出現回数 のハッシュを返す
@@ -89,17 +89,30 @@ def get_tf_ranking(mslist):
                 tf_hash[base] = 0
     return tf_hash
 
+
 #出現頻度上位100件を表示
 print('ex36')
-tf = []
-term = []
-for k,v in sorted(get_tf_ranking(mor_strs_list).items(), key=lambda x:x[1], reverse=True)[1:100]:
-    tf.append(v)
-    term.append(k)
-    print(k)
+tfs = []
+for k,v in sorted(get_tf_ranking(mor_strs_list).items(), key=lambda x:x[1], reverse=True)[0:100]:
+    tfs.append(v)
+    sys.stdout.buffer.write((k + '\n').encode('utf-8'))
 
+#ex37:出現頻度の高い10語の出現頻度を棒グラフで表示
+n = 10 # 表示する上位n語の数
+left = np.array(range(len(tfs))) #横軸
+height = np.array([tf for tf in tfs]) #縦軸
+plt.bar(left=left[:n], height=height[:n], label='ex37')
+plt.title('ex37')
+plt.show()
 
-#ex37:出現頻度の高い10語を棒グラフで表示
-left = np.array(t for t in term)
-height = np.array(tf for tf in term)
-plt.bar(left=term, height=tf)
+#ex38:出現頻度のヒストグラムを表示
+plt.hist(x=height)
+plt.title('ex38')
+plt.show()
+
+#ex39:出現頻度順位と出現頻度の両対数グラフを表示
+plt.plot(left, height)
+plt.xscale('log')
+plt.yscale('log')
+plt.title('ex39')
+plt.show()
