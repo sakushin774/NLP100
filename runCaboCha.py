@@ -11,8 +11,7 @@ for s in f_read.readlines():
     # f_write.buffer.write(c.parseToString(s).encode('utf-8'))
 
     tree =  c.parse(s)
-    f_write.buffer.write(tree.toString(CaboCha.FORMAT_TREE).encode('utf-8'))
-    f_write.buffer.write(tree.toString(CaboCha.FORMAT_LATTICE).encode('utf-8'))
+    f_write.buffer.write(tree.toString(CaboCha.FORMAT_XML).encode('utf-8'))
 
 
 f_read.close()
