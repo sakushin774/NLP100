@@ -74,24 +74,50 @@ def get_mor_text(morphs):
             result = result + m.surface
     return result
 
+# 文節のリストから各文節のテキストの配列を返す
+def get_chk_ary(stc):
+    ary = []
+    for chk in stc:
+        dst_id = chk.dst
+        ary.append(get_mor_text(chk.morphs))
+    return ary
+
+
 #ex42
 #係り元の文節と係り先の文節のテキストをタブ気切りで抽出する
 def get_dst_srcs(chk_in_stcs):
     res = ""
     for stc in chk_in_stcs:
-        dic = []
-        # 各文節のテキストを索引付けする
-        for chk in stc:
-            dst_id = chk.dst
-            dic.append(get_mor_text(chk.morphs))
-
+        ary = get_chk_ary(stc)
         # 係り元と係り先の文節のテキストを抽出
         for chk in stc:
             dst_id = int(chk.dst)
             src_id = int(chk.srcs)
-            res = res + dic[src_id] + "\t" + dic[dst_id] + "\n"
+            res = res + ary[src_id] + "\t" + ary[dst_id] + "\n"
 
         res = res + "\n"
     return res
 
-sys.stdout.buffer.write(get_dst_srcs(chk_in_stcs).encode('utf-8'))
+# sys.stdout.buffer.write(get_dst_srcs(chk_in_stcs).encode('utf-8'))
+
+#文節が名詞を含むかどうかを判定する
+def contains(chk, pos):
+    for mor in chk.morphs:
+        if mor.pos == pos:
+            return True
+    return False
+
+#ex43
+#名詞を含む文節が動詞を含む文節にかかるものを抽出
+def get_n_dep_v(chk_in_stcs):
+    res = ""
+    for stc in chk_in_stcs:
+        # 係り元と係り先の文節のテキストを抽出
+        for chk in stc:
+            dst_id = int(chk.dst)
+            src_id = int(chk.srcs)
+            if contains(stc[src_id], "名詞") and contains(stc[dst_id], "動詞"):
+                res = res + get_mor_text(stc[src_id].morphs) + "\t" + \
+                            get_mor_text(stc[dst_id].morphs) + "\n"
+    return res
+sys.stdout.buffer.write(get_n_dep_v(chk_in_stcs).encode('utf-8'))
